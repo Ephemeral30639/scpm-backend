@@ -4,11 +4,11 @@ module.exports = {
                                 return next()
                             }
     
-        res.redirect('/login')
+        res.send("Not Logged In")
     },
     checkNotAuthenticated: function (req, res, next) {
                             if (req.isAuthenticated()){
-                                return res.redirect('/welcome')
+                                return res.send("Already Logged In")
                             }
                             next()
     },
