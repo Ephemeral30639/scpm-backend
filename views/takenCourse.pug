@@ -1,0 +1,16 @@
+html
+    head
+        title = <%= name %>
+        <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+    body
+    div(class="container")
+    <center><div class='well'><b>Taken Courses</b></div></center>
+        table(class='table table-striped')
+            thead 
+                tr 
+                    th ID     
+                    th Course Name 
+            each item in data
+                tr
+                    td=item.ID
+                    td=item.Name
