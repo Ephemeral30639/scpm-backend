@@ -5,7 +5,7 @@ const checkAuthenticated = authMethods.checkAuthenticated
 const checkNotAuthenticated = authMethods.checkNotAuthenticated
 
 router.get('/', checkAuthenticated, (req, res) =>{
-    res.render('../views/welcome.ejs', {name: req.user.name})
+    res.render('../views/welcome.ejs', {name: req.user.firstname})
 })
 
 module.exports = router

@@ -18,12 +18,13 @@ router.post('/',checkNotAuthenticated, async (req, res) => {
         const hashedPassword = await bcrypt.hash(req.body.password, 10)
         users.push({
             id: Date.now().toString(),
-            name: req.body.name,
+            firstname: req.body.firstname,
+            lastname: req.body.lastname,
             studentID: req.body.StudentID,
             email: req.body.email,
             password: hashedPassword
         })
-        res.redirect('/login')
+        res.send('Registration Success')
     } catch {
         res.redirect('/register')
     }
