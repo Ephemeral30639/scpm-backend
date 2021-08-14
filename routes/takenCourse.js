@@ -26,7 +26,7 @@ const pool = mysql.createPool({
 router.get('/', (req, res) =>{
 
     pool.getConnection(function(err, connection) {
-      connection.query(`(SELECT Courses.ID, Courses.Name, Courses.Category, 6080096_Taken_Courses.Credit FROM 6080096_Taken_Courses INNER JOIN Courses ON 6080096_Taken_Courses.Course_ID=Courses.ID)`, (err, takenCourses) => {
+      connection.query(`(SELECT Courses.ID, Courses.Name, Courses.Category, Courses.Credit FROM 6080079_Taken_Courses INNER JOIN Courses ON 6080079_Taken_Courses.Course_ID=Courses.ID)`, (err, takenCourses) => {
         if (err) throw err;
         console.log(takenCourses);
         res.send(takenCourses) 
