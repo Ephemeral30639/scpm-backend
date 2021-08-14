@@ -24,7 +24,7 @@ router.post('/',checkNotAuthenticated, async (req, res) => {
             email: req.body.email,
             password: hashedPassword
         })
-        res.send('Registration Success')
+        res.send('Registration Successful')
     } catch {
         res.redirect('/register')
     }

@@ -26,10 +26,8 @@ router.get('/',checkNotAuthenticated, (req, res) => {
     res.render('login.ejs')
 })
 
-router.post('/',checkNotAuthenticated, passport.authenticate('local', {
-    successRedirect: '/welcome',
-    failureRedirect: '/login',
-    failureFlash: true
-}))
+router.post('/',checkNotAuthenticated, passport.authenticate('local'), (req, res) => {
+    res.send("Successful Log In")
+})
 
 module.exports = router
