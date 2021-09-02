@@ -8,7 +8,7 @@ const checkNotAuthenticated = authMethods.checkNotAuthenticated
 //Allow Access-Control-Allow-Origin
 //ref: https://stackoverflow.com/questions/18642828/origin-origin-is-not-allowed-by-access-control-allow-origin
 router.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
@@ -23,8 +23,9 @@ const pool = mysql.createPool({
   })
 
 
-router.get('/', (req, res) =>{
+router.get('/', checkAuthenticated, (req, res) =>{
     pool.getConnection(function(err, connection) {
+      console.log(req.user.studentID)
       connection.query(`(SELECT Courses.ID, Courses.Name, Courses.Category, Courses.Credit FROM ${req.user.studentID}_Taken_Courses INNER JOIN Courses ON ${req.user.studentID}_Taken_Courses.Course_ID=Courses.ID)`, (err, takenCourses) => {
         if (err) throw err;
         console.log(takenCourses);

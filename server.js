@@ -1,6 +1,7 @@
-if (process.env.NODE_ENV !== 'production'){
-    require('dotenv').config()
-}
+const dotenv = require('dotenv').config()
+// if (process.env.NODE_ENV !== 'production'){
+//     require('dotenv').config()
+// }
 
 // Requires
 const express = require('express')
@@ -17,6 +18,7 @@ const welcome = require('./routes/welcome')
 const login = require('./routes/login')
 const register = require('./routes/register')
 const takenCourses = require('./routes/takenCourse')
+const getUser = require('./routes/getUser')
 
 //App Uses
 app.use(express.json());
@@ -31,7 +33,15 @@ app.use(session({
 app.use(passport.initialize())
 app.use(passport.session())
 app.use(methodOverride('_method'))
-app.use(cors())
+
+// I am not sure why, but there will be CORS error if this "use" is deleted.
+app.use(
+    cors({
+         origin: "http://localhost:3000", // allow to server to accept request from different origin
+         methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+         credentials: true, // allow session cookie from browser to pass through
+   })
+);
 
 //App Route Uses
 app.use('/', homepage)
@@ -39,10 +49,16 @@ app.use('/welcome', welcome)
 app.use('/login', login)
 app.use('/register', register)
 app.use('/taken-courses', takenCourses)
+app.use('/getuser', getUser)
 
 app.delete('/logout', (req, res) =>{
     req.logOut()
     res.redirect('/login')
+})
+
+app.get('/logout', (req, res) => {
+    req.logOut()
+    res.send('Log out successful')
 })
 
 app.set('port', 5000);

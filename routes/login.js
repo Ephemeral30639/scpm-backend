@@ -23,7 +23,8 @@ router.use(passport.session())
 router.use(methodOverride('_method'))
 
 router.get('/',checkNotAuthenticated, (req, res) => {
-    res.render('login.ejs')
+    // This route is here just to make sure that user cannot enter login page again once they login (basically prevent user from logging in more than once)
+    // The middleware, checkNotAuthenticated, is called here to check if the user is already logged in.
 })
 
 router.post('/', checkNotAuthenticated, passport.authenticate('local'), (req, res) => {
