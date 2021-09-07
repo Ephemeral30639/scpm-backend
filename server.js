@@ -65,4 +65,4 @@ app.get('/logout', (req, res) => {
 
 app.set('port', 5000);
 app.listen(process.env.PORT || app.get('port'))
-console.log('Server Runnign on port localhost:' + app.get('port'));
+console.log('Server Running on port localhost:' + app.get('port'));
