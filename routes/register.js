@@ -19,8 +19,8 @@ const pool = mysql.createPool({
     database: "egcicourse"
 })
 
-router.get('/',checkNotAuthenticated, (req, res) => {
-    res.render('register.ejs')
+router.get('/', checkNotAuthenticated, (req, res) => {
+    res.send('Pass') 
 })
 
 router.post('/',checkNotAuthenticated, async (req, res) => {
