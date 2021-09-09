@@ -11,7 +11,7 @@ const checkNotAuthenticated = authMethods.checkNotAuthenticated
 const credential = require('../user')
 const users = credential.users
 
-router.get("/", (req, res) => {
+router.get("/", checkAuthenticated,(req, res) => {
     res.send({ user: req.user })
   })
 
