@@ -31,7 +31,7 @@ router.get('/', checkAuthenticated, (req, res) =>{
         res.send(takenCourses) 
         connection.release(); 
       })
-  })
+    })
 })
 
 

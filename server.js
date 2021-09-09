@@ -20,6 +20,8 @@ const register = require('./routes/register')
 const takenCourses = require('./routes/takenCourse')
 const getUser = require('./routes/getUser')
 const Makeup = require('./routes/makeup')
+const CurrentTrimester = require('./routes/getCurrentTrimester')
+const Enroll = require('./routes/enroll')
 
 //App Uses
 app.use(express.json());
@@ -52,6 +54,8 @@ app.use('/register', register)
 app.use('/taken-courses', takenCourses)
 app.use('/getuser', getUser)
 app.use('/makeup', Makeup)
+app.use('/getcurrenttrimester', CurrentTrimester)
+app.use('/enroll', Enroll)
 
 app.delete('/logout', (req, res) =>{
     req.logOut()
