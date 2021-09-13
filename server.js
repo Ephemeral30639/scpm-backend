@@ -22,6 +22,7 @@ const getUser = require('./routes/getUser')
 const Makeup = require('./routes/makeup')
 const CurrentTrimester = require('./routes/getCurrentTrimester')
 const Enroll = require('./routes/enroll')
+const { checkAuthenticated } = require('./middleware/auth')
 
 //App Uses
 app.use(express.json());
@@ -57,15 +58,15 @@ app.use('/makeup', Makeup)
 app.use('/getcurrenttrimester', CurrentTrimester)
 app.use('/enroll', Enroll)
 
-app.delete('/logout', (req, res) =>{
-    req.logOut()
-    res.redirect('/login')
-})
-
-app.get('/logout', (req, res) => {
+app.delete('/logout', checkAuthenticated, (req, res) =>{
     req.logOut()
     res.send('Log out successful')
 })
+
+// app.get('/logout', (req, res) => {
+//     req.logOut()
+//     res.send('Log out successful')
+// })
 
 app.set('port', 5000);
 app.listen(process.env.PORT || app.get('port'))

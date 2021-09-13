@@ -21,13 +21,16 @@ router.post("/", checkAuthenticated, (req, res) => {
           connection.release();
 
           for (var i = 0; i < req.body.length; i++){
-              var found = data.find(x => x.Course_ID == req.body[i].id)
-              if (found === undefined){
-                push(req.body[i].id, req.user.studentID)
-              }
-              else {
-                // Do nothing (intentional)
-              }
+            // Find out whether the user has already enrolled on the selected courses.
+            var found = data.find(x => x.Course_ID == req.body[i].id)
+            
+            // If the selected courses is not yet enrolled, add it into the database.
+            if (found === undefined){
+              push(req.body[i].id, req.user.studentID)
+            }
+            else {
+              // If the course is already enrolled, simply just do nothing and go to the next course in the loop.
+            }
           }
         })
     })
