@@ -20,12 +20,11 @@ const pool = mysql.createPool({
     user: "egci492dev",
     password: "egci492db4seniorproject",
     database: "egcicourse"
-  })
+})
 
 
 router.get('/', checkAuthenticated, (req, res) =>{
     pool.getConnection(function(err, connection) {
-      console.log(req.user.studentID)
       connection.query(`(SELECT Courses.ID, Courses.Name, Courses.Category, Courses.Credit FROM ${req.user.studentID}_Taken_Courses INNER JOIN Courses ON ${req.user.studentID}_Taken_Courses.Course_ID=Courses.ID)`, (err, takenCourses) => {
         if (err) throw err;
         console.log(takenCourses);

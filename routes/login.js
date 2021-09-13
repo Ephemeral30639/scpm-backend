@@ -11,12 +11,9 @@ const credential = require('../user')
 const users = credential.users
 
 //Passport Configuration
+// I think this is where you insert mysql query.
 const initializePassport = require('../passport-config')
-initializePassport(
-    passport, 
-    email => users.find(users => users.email === email),
-    id => users.find(user => user.id === id)
-)
+initializePassport(passport)
 
 router.use(passport.initialize())
 router.use(passport.session())
@@ -25,6 +22,7 @@ router.use(methodOverride('_method'))
 router.get('/',checkNotAuthenticated, (req, res) => {
     // This route is here just to make sure that user cannot enter login page again once they login (basically prevent user from logging in more than once)
     // The middleware, checkNotAuthenticated, is called here to check if the user is already logged in.
+    res.render('login.ejs')
 })
 
 router.post('/', checkNotAuthenticated, passport.authenticate('local'), (req, res) => {
