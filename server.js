@@ -56,7 +56,7 @@ app.use('/taken-courses', takenCourses)
 app.use('/getuser', getUser)
 app.use('/makeup', Makeup)
 app.use('/getcurrenttrimester', CurrentTrimester)
-app.use('/enroll', Enroll)
+app.use('/enrollment', Enroll)
 
 app.delete('/logout', checkAuthenticated, (req, res) =>{
     req.logOut()
