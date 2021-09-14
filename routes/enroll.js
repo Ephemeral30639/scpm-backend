@@ -14,7 +14,7 @@ const pool = mysql.createPool({
     database: "egcicourse"
 })
 
-router.post("/", checkAuthenticated, (req, res) => {
+router.post("/enroll", checkAuthenticated, (req, res) => {
     pool.getConnection(function(err, connection) {
         connection.query(`SELECT * FROM T2_2020_2021_Enrollment where Student_ID like '${req.user.studentID}';`, (err, data) => {
           if (err) throw err;
@@ -26,7 +26,7 @@ router.post("/", checkAuthenticated, (req, res) => {
             
             // If the selected courses is not yet enrolled, add it into the database.
             if (found === undefined){
-              push(req.body[i].id, req.user.studentID)
+              pushCourse(req.body[i].id, req.user.studentID)
             }
             else {
               // If the course is already enrolled, simply just do nothing and go to the next course in the loop.
@@ -37,7 +37,23 @@ router.post("/", checkAuthenticated, (req, res) => {
     res.send('Success')
 })
 
-function push(course, studentID){
+router.post("/unenroll", (req, res) => {
+  for (var i = 0; i < req.body.length; i++){
+    deleteCourse(req.body[i].id, req.user.studentID)
+  }
+  res.send('Success')
+})
+
+function deleteCourse(course, studentID){
+  pool.getConnection(function(err, connection) {
+    connection.query(`DELETE FROM T2_2020_2021_Enrollment where Student_ID like '${studentID}' and Course_ID like '${course}'`, (err, data) => {
+      if (err) throw err;
+      connection.release();
+    })
+  })
+}
+
+function pushCourse(course, studentID){
     pool.getConnection(function(err, connection) {
         connection.query(`insert into T2_2020_2021_Enrollment (Student_ID, Course_ID) values ('${studentID}','${course}')`, (err, data) => {
           if (err) throw err;
