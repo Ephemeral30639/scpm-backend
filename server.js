@@ -22,6 +22,7 @@ const getUser = require('./routes/getUser')
 const Makeup = require('./routes/makeup')
 const CurrentTrimester = require('./routes/getCurrentTrimester')
 const Enroll = require('./routes/enroll')
+const Advice = require('./routes/advice')
 const { checkAuthenticated } = require('./middleware/auth')
 
 //App Uses
@@ -57,6 +58,7 @@ app.use('/getuser', getUser)
 app.use('/makeup', Makeup)
 app.use('/getcurrenttrimester', CurrentTrimester)
 app.use('/enrollment', Enroll)
+app.use('/advice', Advice)
 
 app.delete('/logout', checkAuthenticated, (req, res) =>{
     req.logOut()
