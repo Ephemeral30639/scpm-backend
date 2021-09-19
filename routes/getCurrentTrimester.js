@@ -14,11 +14,15 @@ const pool = mysql.createPool({
     database: "egcicourse"
 })
 
+
 router.get("/timetable", checkAuthenticated, (req, res) => {
     pool.getConnection(function(err, connection) {
-        connection.query(`SELECT T2_2020_2021.ID, Name, T2_2020_2021.Date, T2_2020_2021.Time FROM T2_2020_2021 INNER JOIN Courses ON T2_2020_2021.ID=Courses.ID`, (err, currentTrimester) => {
-          if (err) throw err;
-          console.log(currentTrimester);
+        connection.query(`SELECT ${req.query.trimester}.ID, Name, ${req.query.trimester}.Date, ${req.query.trimester}.Time FROM ${req.query.trimester} INNER JOIN Courses ON ${req.query.trimester}.ID=Courses.ID`, (err, currentTrimester) => {
+          if (err){
+              if(err.code == 'ER_NO_SUCH_TABLE'){
+                  createNewTrimesterTable(req.query.trimester)
+              }
+          }
           res.send(currentTrimester) 
           connection.release(); 
         })
@@ -27,13 +31,70 @@ router.get("/timetable", checkAuthenticated, (req, res) => {
 
 router.get("/studentcurrentenrollment", checkAuthenticated, (req, res) =>{
     pool.getConnection(function(err, connection) {
-        connection.query(`SELECT T2_2020_2021.ID, Name, T2_2020_2021.Date, T2_2020_2021.Time FROM T2_2020_2021_Enrollment inner join T2_2020_2021 on T2_2020_2021_Enrollment.Course_ID=T2_2020_2021.ID inner join Courses ON T2_2020_2021.ID=Courses.ID where Student_ID like '${req.user.studentID}';`, (err, currentEnrollment) => {
+        connection.query(`SELECT ${req.query.trimester}.ID, Name, ${req.query.trimester}.Date, ${req.query.trimester}.Time FROM ${req.query.trimester}_Enrollment inner join ${req.query.trimester} on ${req.query.trimester}_Enrollment.Course_ID=${req.query.trimester}.ID inner join Courses ON ${req.query.trimester}.ID=Courses.ID where Student_ID like '${req.user.studentID}';`, (err, currentEnrollment) => {
           if (err) throw err;
-          console.log(currentEnrollment);
           res.send(currentEnrollment) 
           connection.release(); 
         })
     })
 })
+
+
+router.get("/currenttrimester", (req, res) =>{
+    pool.getConnection(function(err, connection) {
+        connection.query(`select trimester from Trimesters where current like 'yes'`, (err, currentTrimester) => {
+          if (err) throw err;
+          res.send(currentTrimester) 
+          connection.release(); 
+        })
+    })
+})
+
+router.get("/availabletrimesters", (req, res) =>{
+    pool.getConnection(function(err, connection) {
+        connection.query(`select trimester from Trimesters where current like 'no'`, (err, availableTrimesters) => {
+          if (err) throw err;
+          res.send(availableTrimesters) 
+          connection.release(); 
+        })
+    })
+})
+
+router.get("/changecurrenttrimester", checkAuthenticated, (req, res) =>{
+    changeCurrentTrimester(req.query.current, req.query.new)
+    res.send('Successfully Changed')
+})
+
+function changeCurrentTrimester(currentTrimester, newTrimester){
+    pool.getConnection(function(err, connection) {
+        connection.query(`UPDATE Trimesters SET current = 'no' WHERE trimester like '${currentTrimester}';`, (err, data) => {
+          if (err) throw err;
+          connection.release();
+        })
+    })
+    
+    pool.getConnection(function(err, connection) {
+        connection.query(`UPDATE Trimesters SET current = 'yes' WHERE trimester like '${newTrimester}';`, (err, data) => {
+            if (err) throw err; 
+            connection.release();
+        })
+    })
+}
+
+function createNewTrimesterTable(trimester){
+    pool.getConnection(function(err, connection) {
+        connection.query(`create table ${trimester} (ID varchar(7),Date varchar(10),Time varchar(10))`, (err, data) => {
+            if (err) throw err; 
+            connection.release();
+        })
+    })
+
+    pool.getConnection(function(err, connection) {
+        connection.query(`create table ${trimester}_Enrollment (Student_ID int, Course_ID varchar(7))`, (err, data) => {
+            if (err) throw err; 
+            connection.release();
+        })
+    })
+}
 
 module.exports = router

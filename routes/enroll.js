@@ -16,7 +16,7 @@ const pool = mysql.createPool({
 
 router.post("/enroll", checkAuthenticated, (req, res) => {
     pool.getConnection(function(err, connection) {
-        connection.query(`SELECT * FROM T2_2020_2021_Enrollment where Student_ID like '${req.user.studentID}';`, (err, data) => {
+        connection.query(`SELECT * FROM ${req.query.trimester}_Enrollment where Student_ID like '${req.user.studentID}';`, (err, data) => {
           if (err) throw err;
           connection.release();
 
@@ -26,7 +26,7 @@ router.post("/enroll", checkAuthenticated, (req, res) => {
             
             // If the selected courses is not yet enrolled, add it into the database.
             if (found === undefined){
-              pushCourse(req.body[i].id, req.user.studentID)
+              pushCourse(req.body[i].id, req.user.studentID, req.query.trimester)
             }
             else {
               // If the course is already enrolled, simply just do nothing and go to the next course in the loop.
@@ -37,25 +37,25 @@ router.post("/enroll", checkAuthenticated, (req, res) => {
     res.send('Success')
 })
 
-router.post("/unenroll", (req, res) => {
+router.post("/unenroll", checkAuthenticated, (req, res) => {
   for (var i = 0; i < req.body.length; i++){
-    deleteCourse(req.body[i].id, req.user.studentID)
+    deleteCourse(req.body[i].id, req.user.studentID, req.query.trimester)
   }
   res.send('Success')
 })
 
-function deleteCourse(course, studentID){
+function deleteCourse(course, studentID, trimester){
   pool.getConnection(function(err, connection) {
-    connection.query(`DELETE FROM T2_2020_2021_Enrollment where Student_ID like '${studentID}' and Course_ID like '${course}'`, (err, data) => {
+    connection.query(`DELETE FROM ${trimester}_Enrollment where Student_ID like '${studentID}' and Course_ID like '${course}'`, (err, data) => {
       if (err) throw err;
       connection.release();
     })
   })
 }
 
-function pushCourse(course, studentID){
+function pushCourse(course, studentID, trimester){
     pool.getConnection(function(err, connection) {
-        connection.query(`insert into T2_2020_2021_Enrollment (Student_ID, Course_ID) values ('${studentID}','${course}')`, (err, data) => {
+        connection.query(`insert into ${trimester}_Enrollment (Student_ID, Course_ID) values ('${studentID}','${course}')`, (err, data) => {
           if (err) throw err;
           connection.release();
         })
