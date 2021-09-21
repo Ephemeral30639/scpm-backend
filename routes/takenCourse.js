@@ -31,7 +31,7 @@ router.get('/loadtakencourse', checkAuthenticated, (req, res) =>{
         res.send(takenCourses) 
         connection.release(); 
       })
-  })
+    })
 })
 
 //load all non taken course
