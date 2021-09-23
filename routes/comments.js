@@ -14,4 +14,34 @@ const pool = mysql.createPool({
     database: "egcicourse"
 })
 
+router.get("/getallcourses", (req, res) => {
+    pool.getConnection(function(err, connection) {
+        connection.query(`SELECT ID FROM Courses`, (err, courses) => {
+          if (err) throw err;
+          connection.release();
+          res.send(courses)
+        })
+    })
+})
+
+router.get("/getcoursename", (req, res) => {
+    pool.getConnection(function(err, connection) {
+        connection.query(`SELECT Name FROM Courses WHERE ID LIKE '${req.query.course}'`, (err, course) => {
+          if (err) throw err;
+          connection.release();
+          res.send(course)
+        })
+    })
+})
+
+router.get("/getcoursecomments", (req, res) => {
+    pool.getConnection(function(err, connection) {
+        connection.query(`SELECT comment, timestamp, studentID FROM CourseComments WHERE courseID LIKE '${req.query.course}' ORDER BY timestamp`, (err, courseComments) => {
+          if (err) throw err;
+          connection.release();
+          res.send(courseComments)
+        })
+    })
+})
+
 module.exports = router
