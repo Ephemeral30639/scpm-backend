@@ -24,6 +24,8 @@ const CurrentTrimester = require('./routes/getCurrentTrimester')
 const Enroll = require('./routes/enroll')
 const Advice = require('./routes/advice')
 const EditTrimester = require('./routes/editTrimester')
+const Playground = require('./routes/playground')
+const Comments = require('./routes/comments')
 const { checkAuthenticated } = require('./middleware/auth')
 
 //App Uses
@@ -61,6 +63,8 @@ app.use('/getcurrenttrimester', CurrentTrimester)
 app.use('/enrollment', Enroll)
 app.use('/advice', Advice)
 app.use('/edittrimester', EditTrimester)
+app.use('/playground', Playground)
+app.use('/comments', Comments)
 
 app.delete('/logout', checkAuthenticated, (req, res) =>{
     req.logOut()
