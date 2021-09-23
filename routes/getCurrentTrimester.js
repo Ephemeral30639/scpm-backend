@@ -19,7 +19,7 @@ router.get("/timetable", checkAuthenticated, (req, res) => {
     pool.getConnection(function(err, connection) {
         connection.query(`SELECT ${req.query.trimester}.ID, Name, ${req.query.trimester}.Date, ${req.query.trimester}.Time FROM ${req.query.trimester} INNER JOIN Courses ON ${req.query.trimester}.ID=Courses.ID`, (err, currentTrimester) => {
           if (err){
-              if(err.code == 'ER_NO_SUCH_TABLE'){
+              if(err.code == 'ER_NO_SUCH_TABLE' && req.user.firstname == 'admin'){
                   createNewTrimesterTable(req.query.trimester)
               }
           }
