@@ -25,6 +25,7 @@ const Enroll = require('./routes/enroll')
 const Advice = require('./routes/advice')
 const EditTrimester = require('./routes/editTrimester')
 const { checkAuthenticated } = require('./middleware/auth')
+const GPCC = require('./routes/gpcc')
 
 //App Uses
 app.use(express.json());
@@ -61,6 +62,7 @@ app.use('/getcurrenttrimester', CurrentTrimester)
 app.use('/enrollment', Enroll)
 app.use('/advice', Advice)
 app.use('/edittrimester', EditTrimester)
+app.use('/gpcc', GPCC)
 
 app.delete('/logout', checkAuthenticated, (req, res) =>{
     req.logOut()
