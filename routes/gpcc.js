@@ -32,16 +32,6 @@ router.get("/", (req, res) => {
     })
 })
 })
-router.get("/getmakeup", (req, res) => {
-  pool.getConnection(function(err, connection) {
-      connection.query(`SELECT * FROM T2_2020_2021 WHERE ID IN (SELECT Course_ID FROM T2_2020_2021_Enrollment WHERE Student_ID IN (SELECT Student_ID FROM T2_2020_2021_Enrollment WHERE Course_ID="${req.query.course}"))`, (err, makeup) => {
-        if (err) throw err;
-        console.log(makeup);
-        res.send(makeup) 
-        connection.release();
-      })
-  })
-})
 
 
 module.exports = router
