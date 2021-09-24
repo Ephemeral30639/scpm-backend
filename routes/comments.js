@@ -44,4 +44,20 @@ router.get("/getcoursecomments", (req, res) => {
     })
 })
 
+router.post("/inputcomment", (req, res) => {
+    if (req.query.studentID == 'Not Anonymous'){
+        var studentID = req.user.studentID
+    } else {
+        var studentID = req.query.studentID
+    }
+    pool.getConnection(function(err, connection) {
+        connection.query(`insert into CourseComments (commentID, courseID, comment, timestamp, studentID) values ('${req.query.commentID}', '${req.query.courseID}', '${req.query.comment}', '${req.query.timestamp}', '${studentID}');`, (err, courseComments) => {
+          if (err) throw err;
+          connection.release();
+          res.send('Comment Successful')
+        })
+    })
+    // console.log(req.query.commentID, req.query.courseID, req.query.comment, req.query.timestamp, req.query.studentID)
+})
+
 module.exports = router
