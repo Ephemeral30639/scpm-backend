@@ -15,11 +15,11 @@ const pool = mysql.createPool({
 })
 
 
-router.get("/timetable", checkAuthenticated, (req, res) => {
+router.get("/timetable", (req, res) => {
     pool.getConnection(function(err, connection) {
         connection.query(`SELECT ${req.query.trimester}.ID, Name, ${req.query.trimester}.Date, ${req.query.trimester}.Time FROM ${req.query.trimester} INNER JOIN Courses ON ${req.query.trimester}.ID=Courses.ID`, (err, currentTrimester) => {
           if (err){
-              if(err.code == 'ER_NO_SUCH_TABLE' && req.user.firstname == 'admin'){
+              if(err.code == 'ER_NO_SUCH_TABLE'){
                   createNewTrimesterTable(req.query.trimester)
               }
           }
@@ -29,7 +29,7 @@ router.get("/timetable", checkAuthenticated, (req, res) => {
     })
 })
 
-router.get("/studentcurrentenrollment", checkAuthenticated, (req, res) =>{
+router.get("/studentcurrentenrollment", (req, res) =>{
     pool.getConnection(function(err, connection) {
         connection.query(`SELECT ${req.query.trimester}.ID, Name, ${req.query.trimester}.Date, ${req.query.trimester}.Time FROM ${req.query.trimester}_Enrollment inner join ${req.query.trimester} on ${req.query.trimester}_Enrollment.Course_ID=${req.query.trimester}.ID inner join Courses ON ${req.query.trimester}.ID=Courses.ID where Student_ID like '${req.user.studentID}';`, (err, currentEnrollment) => {
           if (err) throw err;
@@ -60,7 +60,7 @@ router.get("/availabletrimesters", (req, res) =>{
     })
 })
 
-router.get("/changecurrenttrimester", checkAuthenticated, (req, res) =>{
+router.get("/changecurrenttrimester", (req, res) =>{
     changeCurrentTrimester(req.query.current, req.query.new)
     res.send('Successfully Changed')
 })
