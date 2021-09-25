@@ -13,6 +13,7 @@ const methodOverride = require('method-override')
 const cors = require('cors')
 
 //Route Requires
+const { checkAuthenticated } = require('./middleware/auth')
 const homepage = require('./routes/homepage')
 const welcome = require('./routes/welcome')
 const login = require('./routes/login')
@@ -26,7 +27,6 @@ const Advice = require('./routes/advice')
 const EditTrimester = require('./routes/editTrimester')
 const Playground = require('./routes/playground')
 const Comments = require('./routes/comments')
-const { checkAuthenticated } = require('./middleware/auth')
 const GPCC = require('./routes/gpcc')
 
 //App Uses
