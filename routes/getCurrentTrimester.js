@@ -31,7 +31,7 @@ router.get("/timetable", checkAuthenticated, (req, res) => {
 
 router.get("/studentcurrentenrollment", checkAuthenticated, (req, res) =>{
     pool.getConnection(function(err, connection) {
-        connection.query(`SELECT ${req.query.trimester}.ID, Name, ${req.query.trimester}.Date, ${req.query.trimester}.Time FROM ${req.query.trimester}_Enrollment inner join ${req.query.trimester} on ${req.query.trimester}_Enrollment.Course_ID=${req.query.trimester}.ID inner join Courses ON ${req.query.trimester}.ID=Courses.ID where Student_ID like '${req.user.studentID}';`, (err, currentEnrollment) => {
+        connection.query(`SELECT Course_ID as ID, Courses.Name, ${req.query.trimester}.date as Date, ${req.query.trimester}.time as Time FROM ${req.query.trimester}_Enrollment inner join ${req.query.trimester} on ${req.query.trimester}_Enrollment.Course_ID=${req.query.trimester}.ID and ${req.query.trimester}_Enrollment.time=${req.query.trimester}.time inner join Courses on Course_ID=Courses.ID where Student_ID like "${req.user.studentID}" group by ${req.query.trimester}.time, ${req.query.trimester}.date;`, (err, currentEnrollment) => {
           if (err) throw err;
           res.send(currentEnrollment) 
           connection.release(); 
