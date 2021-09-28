@@ -25,7 +25,7 @@ const pool = mysql.createPool({
 //load all taken course
 router.get('/loadtakencourse', checkAuthenticated, (req, res) =>{
     pool.getConnection(function(err, connection) {
-      connection.query(`(SELECT Courses.ID, Courses.Name, Courses.Category, Courses.Credit FROM ${req.user.studentID}_Taken_Courses INNER JOIN Courses ON ${req.user.studentID}_Taken_Courses.Course_ID=Courses.ID)`, (err, takenCourses) => {
+      connection.query(`(SELECT Courses.ID, Courses.Name, Courses.Category, Courses.Credit, ${req.user.studentID}_Taken_Courses.remark FROM ${req.user.studentID}_Taken_Courses INNER JOIN Courses ON ${req.user.studentID}_Taken_Courses.Course_ID=Courses.ID)`, (err, takenCourses) => {
         if (err) throw err;
         console.log(takenCourses);
         res.send(takenCourses) 
@@ -47,9 +47,9 @@ router.get('/loadcourselist', checkAuthenticated, (req, res) =>{
 })
 
 //add taken course
-router.get('/addtakencourse/:courseID', checkAuthenticated, (req, res) =>{
+router.get('/addtakencourse/:courseID/:remark', checkAuthenticated, (req, res) =>{
   pool.getConnection(function(err, connection) {
-    connection.query(`INSERT INTO ${req.user.studentID}_Taken_Courses (Student_ID, Course_ID) VALUES ('${req.user.studentID}', '${req.params.courseID}')`, (err) => {
+    connection.query(`INSERT INTO ${req.user.studentID}_Taken_Courses (Student_ID, Course_ID, remark) VALUES ('${req.user.studentID}', '${req.params.courseID}', '${req.params.remark}')`, (err) => {
       if (err){
         console.log(err.sqlMessage)
         res.send(err.sqlMessage)
