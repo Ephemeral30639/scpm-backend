@@ -24,9 +24,11 @@ const pool = mysql.createPool({
 
 router.get("/getactivecourses", (req, res) => {
     pool.getConnection(function(err, connection) {
-        connection.query(`SELECT distinct id from ${req.query.trimester}`, (err, activeCourses) => {
-          if (err) throw err;
-          console.log(activeCourses);
+        connection.query(`select distinct Course_ID from ${req.query.trimester}_Enrollment`, (err, activeCourses) => {
+          if (err){
+            res.send('Error')
+            return
+          }
           res.send(activeCourses) 
           connection.release(); 
         })
@@ -36,8 +38,10 @@ router.get("/getactivecourses", (req, res) => {
 router.get("/getmakeup", (req, res) => {
   pool.getConnection(function(err, connection) {
       connection.query(`select ID, Date, Time, ${req.query.trimester}.uuid from (SELECT * FROM ${req.query.trimester}_Enrollment WHERE Student_ID IN (SELECT Student_ID FROM ${req.query.trimester}_Enrollment WHERE Course_ID="${req.query.course}")) as result inner join ${req.query.trimester} on result.uuid=${req.query.trimester}.uuid`, (err, makeup) => {
-        if (err) throw err;
-        console.log(makeup);
+        if (err){
+          res.send('Error')
+          return
+        }
         res.send(makeup) 
         connection.release();
       })
