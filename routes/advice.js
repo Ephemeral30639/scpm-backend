@@ -14,6 +14,16 @@ const pool = mysql.createPool({
     database: "egcicourse"
 })
 
+router.get("/getalladvicecategory", (req, res) => {
+  pool.getConnection(function(err, connection) {
+      connection.query(`select distinct category from Advices`, (err, data) => {
+        if (err) throw err;
+        connection.release();
+        res.send(data)
+      })
+  })
+})
+
 router.get("/getalladvice", (req, res) => {
     pool.getConnection(function(err, connection) {
         connection.query(`SELECT Advices.category, Advices.courseID, Courses.Name, Advices.adviceText FROM Advices INNER JOIN Courses ON Courses.ID=Advices.courseID`, (err, data) => {
