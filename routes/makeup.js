@@ -35,7 +35,7 @@ router.get("/getactivecourses", (req, res) => {
 
 router.get("/getmakeup", (req, res) => {
   pool.getConnection(function(err, connection) {
-      connection.query(`SELECT Course_ID, date, time FROM ${req.query.trimester}_Enrollment WHERE Student_ID IN (SELECT Student_ID FROM ${req.query.trimester}_Enrollment WHERE Course_ID="${req.query.course}")`, (err, makeup) => {
+      connection.query(`select ID, Date, Time, ${req.query.trimester}.uuid from (SELECT * FROM ${req.query.trimester}_Enrollment WHERE Student_ID IN (SELECT Student_ID FROM ${req.query.trimester}_Enrollment WHERE Course_ID="${req.query.course}")) as result inner join ${req.query.trimester} on result.uuid=${req.query.trimester}.uuid`, (err, makeup) => {
         if (err) throw err;
         console.log(makeup);
         res.send(makeup) 
