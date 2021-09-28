@@ -17,7 +17,7 @@ const pool = mysql.createPool({
 
 router.get("/timetable", checkAuthenticated, (req, res) => {
     pool.getConnection(function(err, connection) {
-        connection.query(`SELECT ${req.query.trimester}.ID, Name, ${req.query.trimester}.Date, ${req.query.trimester}.Time FROM ${req.query.trimester} INNER JOIN Courses ON ${req.query.trimester}.ID=Courses.ID`, (err, currentTrimester) => {
+        connection.query(`SELECT ${req.query.trimester}.ID, Name, ${req.query.trimester}.Date, ${req.query.trimester}.Time, ${req.query.trimester}.uuid FROM ${req.query.trimester} INNER JOIN Courses ON ${req.query.trimester}.ID=Courses.ID`, (err, currentTrimester) => {
           if (err){
               if(err.code == 'ER_NO_SUCH_TABLE' && req.user.firstname == 'admin'){
                   createNewTrimesterTable(req.query.trimester)
@@ -31,7 +31,7 @@ router.get("/timetable", checkAuthenticated, (req, res) => {
 
 router.get("/studentcurrentenrollment", checkAuthenticated, (req, res) =>{
     pool.getConnection(function(err, connection) {
-        connection.query(`SELECT Course_ID as ID, Courses.Name, ${req.query.trimester}.date as Date, ${req.query.trimester}.time as Time FROM ${req.query.trimester}_Enrollment inner join ${req.query.trimester} on ${req.query.trimester}_Enrollment.Course_ID=${req.query.trimester}.ID and ${req.query.trimester}_Enrollment.time=${req.query.trimester}.time inner join Courses on Course_ID=Courses.ID where Student_ID like "${req.user.studentID}" group by ${req.query.trimester}.time, ${req.query.trimester}.date;`, (err, currentEnrollment) => {
+        connection.query(`SELECT Course_ID as ID, Name, Date, Time, uuid FROM (SELECT Student_ID, Course_ID, Courses.Name, ${req.query.trimester}.Date, ${req.query.trimester}.Time, ${req.query.trimester}.uuid FROM ${req.query.trimester}_Enrollment inner join ${req.query.trimester} on ${req.query.trimester}.uuid=${req.query.trimester}_Enrollment.uuid inner join Courses on ${req.query.trimester}_Enrollment.Course_ID=Courses.ID) as result where Student_ID like '${req.user.studentID}'`, (err, currentEnrollment) => {
           if (err) throw err;
           res.send(currentEnrollment) 
           connection.release(); 
