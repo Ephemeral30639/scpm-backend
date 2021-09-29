@@ -27,7 +27,7 @@ router.get('/loadtakencourse', checkAuthenticated, (req, res) =>{
     pool.getConnection(function(err, connection) {
       connection.query(`(SELECT Courses.ID, Courses.Name, Courses.Category, Courses.Credit, ${req.user.studentID}_Taken_Courses.remark FROM ${req.user.studentID}_Taken_Courses INNER JOIN Courses ON ${req.user.studentID}_Taken_Courses.Course_ID=Courses.ID)`, (err, takenCourses) => {
         if (err) throw err;
-        console.log(takenCourses);
+        console.log('sending taken courses data');
         res.send(takenCourses) 
         connection.release(); 
       })
@@ -39,7 +39,7 @@ router.get('/loadcourselist', checkAuthenticated, (req, res) =>{
   pool.getConnection(function(err, connection) {
     connection.query(`SELECT Courses.ID, Courses.Name FROM Courses WHERE Courses.ID NOT IN (SELECT ${req.user.studentID}_Taken_Courses.Course_ID FROM ${req.user.studentID}_Taken_Courses)`, (err, Courses) => {
       if (err) throw err;
-      console.log(Courses);
+      console.log("sending all non taken courses");
       res.send(Courses) 
       connection.release(); 
     })
