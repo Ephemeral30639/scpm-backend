@@ -26,7 +26,7 @@ router.post("/enroll", checkAuthenticated, (req, res) => {
             
             // If the selected courses is not yet enrolled, add it into the database.
             if (found === undefined){
-              pushCourse(req.body[i].id, req.user.studentID, req.query.trimester)
+              pushCourse(req.body[i].id, req.body[i].uuid, req.user.studentID, req.query.trimester)
             }
             else {
               // If the course is already enrolled, simply just do nothing and go to the next course in the loop.
@@ -35,27 +35,28 @@ router.post("/enroll", checkAuthenticated, (req, res) => {
         })
     })
     res.send('Success')
+    // console.log(req.body)
 })
 
 router.post("/unenroll", checkAuthenticated, (req, res) => {
   for (var i = 0; i < req.body.length; i++){
-    deleteCourse(req.body[i].id, req.user.studentID, req.query.trimester)
+    deleteCourse(req.body[i].id, req.body[i].uuid, req.user.studentID, req.query.trimester)
   }
   res.send('Success')
 })
 
-function deleteCourse(course, studentID, trimester){
+function deleteCourse(course, uuid,  studentID, trimester){
   pool.getConnection(function(err, connection) {
-    connection.query(`DELETE FROM ${trimester}_Enrollment where Student_ID like '${studentID}' and Course_ID like '${course}'`, (err, data) => {
+    connection.query(`DELETE FROM ${trimester}_Enrollment where Student_ID like '${studentID}' and Course_ID like '${course}' and uuid like '${uuid}'`, (err, data) => {
       if (err) throw err;
       connection.release();
     })
   })
 }
 
-function pushCourse(course, studentID, trimester){
+function pushCourse(course, uuid, studentID, trimester){
     pool.getConnection(function(err, connection) {
-        connection.query(`insert into ${trimester}_Enrollment (Student_ID, Course_ID) values ('${studentID}','${course}')`, (err, data) => {
+        connection.query(`insert into ${trimester}_Enrollment (Student_ID, Course_ID, uuid) values ('${studentID}','${course}', '${uuid}')`, (err, data) => {
           if (err) throw err;
           connection.release();
         })

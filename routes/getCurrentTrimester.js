@@ -17,7 +17,7 @@ const pool = mysql.createPool({
 
 router.get("/timetable", checkAuthenticated, (req, res) => {
     pool.getConnection(function(err, connection) {
-        connection.query(`SELECT ${req.query.trimester}.ID, Name, ${req.query.trimester}.Date, ${req.query.trimester}.Time FROM ${req.query.trimester} INNER JOIN Courses ON ${req.query.trimester}.ID=Courses.ID`, (err, currentTrimester) => {
+        connection.query(`SELECT ${req.query.trimester}.ID, Name, ${req.query.trimester}.Date, ${req.query.trimester}.Time, ${req.query.trimester}.uuid FROM ${req.query.trimester} INNER JOIN Courses ON ${req.query.trimester}.ID=Courses.ID`, (err, currentTrimester) => {
           if (err){
               if(err.code == 'ER_NO_SUCH_TABLE' && req.user.firstname == 'admin'){
                   createNewTrimesterTable(req.query.trimester)
@@ -31,8 +31,11 @@ router.get("/timetable", checkAuthenticated, (req, res) => {
 
 router.get("/studentcurrentenrollment", checkAuthenticated, (req, res) =>{
     pool.getConnection(function(err, connection) {
-        connection.query(`SELECT ${req.query.trimester}.ID, Name, ${req.query.trimester}.Date, ${req.query.trimester}.Time FROM ${req.query.trimester}_Enrollment inner join ${req.query.trimester} on ${req.query.trimester}_Enrollment.Course_ID=${req.query.trimester}.ID inner join Courses ON ${req.query.trimester}.ID=Courses.ID where Student_ID like '${req.user.studentID}';`, (err, currentEnrollment) => {
-          if (err) throw err;
+        connection.query(`SELECT Course_ID as ID, Name, Date, Time, uuid FROM (SELECT Student_ID, Course_ID, Courses.Name, ${req.query.trimester}.Date, ${req.query.trimester}.Time, ${req.query.trimester}.uuid FROM ${req.query.trimester}_Enrollment inner join ${req.query.trimester} on ${req.query.trimester}.uuid=${req.query.trimester}_Enrollment.uuid inner join Courses on ${req.query.trimester}_Enrollment.Course_ID=Courses.ID) as result where Student_ID like '${req.user.studentID}'`, (err, currentEnrollment) => {
+          if (err){
+              res.send('Error')
+              return
+          }
           res.send(currentEnrollment) 
           connection.release(); 
         })
@@ -43,7 +46,10 @@ router.get("/studentcurrentenrollment", checkAuthenticated, (req, res) =>{
 router.get("/currenttrimester", (req, res) =>{
     pool.getConnection(function(err, connection) {
         connection.query(`select trimester from Trimesters where current like 'yes'`, (err, currentTrimester) => {
-          if (err) throw err;
+          if (err){
+              res.send('Error')
+              return
+          }
           res.send(currentTrimester) 
           connection.release(); 
         })
@@ -53,7 +59,10 @@ router.get("/currenttrimester", (req, res) =>{
 router.get("/availabletrimesters", (req, res) =>{
     pool.getConnection(function(err, connection) {
         connection.query(`select trimester from Trimesters where current like 'no'`, (err, availableTrimesters) => {
-          if (err) throw err;
+          if (err){
+              res.send('Error')
+              return
+          }
           res.send(availableTrimesters) 
           connection.release(); 
         })
@@ -68,14 +77,20 @@ router.get("/changecurrenttrimester", checkAuthenticated, (req, res) =>{
 function changeCurrentTrimester(currentTrimester, newTrimester){
     pool.getConnection(function(err, connection) {
         connection.query(`UPDATE Trimesters SET current = 'no' WHERE trimester like '${currentTrimester}';`, (err, data) => {
-          if (err) throw err;
+          if (err){
+              res.send('Error')
+              return
+          }
           connection.release();
         })
     })
     
     pool.getConnection(function(err, connection) {
         connection.query(`UPDATE Trimesters SET current = 'yes' WHERE trimester like '${newTrimester}';`, (err, data) => {
-            if (err) throw err; 
+            if (err){
+                res.send('Error')
+                return
+            } 
             connection.release();
         })
     })
@@ -84,14 +99,20 @@ function changeCurrentTrimester(currentTrimester, newTrimester){
 function createNewTrimesterTable(trimester){
     pool.getConnection(function(err, connection) {
         connection.query(`create table ${trimester} (ID varchar(7),Date varchar(10),Time varchar(10))`, (err, data) => {
-            if (err) throw err; 
+            if (err){
+                res.send('Error')
+                return
+            } 
             connection.release();
         })
     })
 
     pool.getConnection(function(err, connection) {
         connection.query(`create table ${trimester}_Enrollment (Student_ID int, Course_ID varchar(7))`, (err, data) => {
-            if (err) throw err; 
+            if (err){
+                res.send('Error')
+                return
+            } 
             connection.release();
         })
     })
