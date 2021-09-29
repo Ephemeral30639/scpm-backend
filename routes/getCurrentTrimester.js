@@ -98,7 +98,7 @@ function changeCurrentTrimester(currentTrimester, newTrimester){
 
 function createNewTrimesterTable(trimester){
     pool.getConnection(function(err, connection) {
-        connection.query(`create table ${trimester} (ID varchar(7),Date varchar(10),Time varchar(10))`, (err, data) => {
+        connection.query(`create table ${trimester} (ID varchar(7), Date varchar(10), Time varchar(10), uuid varchar(255))`, (err, data) => {
             if (err){
                 res.send('Error')
                 return
@@ -108,7 +108,7 @@ function createNewTrimesterTable(trimester){
     })
 
     pool.getConnection(function(err, connection) {
-        connection.query(`create table ${trimester}_Enrollment (Student_ID int, Course_ID varchar(7))`, (err, data) => {
+        connection.query(`create table ${trimester}_Enrollment (Student_ID int, Course_ID varchar(7), uuid varchar(255))`, (err, data) => {
             if (err){
                 res.send('Error')
                 return
