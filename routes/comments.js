@@ -16,7 +16,7 @@ const pool = mysql.createPool({
 
 router.get("/getallcourses", (req, res) => {
     pool.getConnection(function(err, connection) {
-        connection.query(`SELECT ID FROM Courses`, (err, courses) => {
+        connection.query(`SELECT DISTINCT ID FROM AllCourses`, (err, courses) => {
           if (err) throw err;
           connection.release();
           res.send(courses)
@@ -26,7 +26,7 @@ router.get("/getallcourses", (req, res) => {
 
 router.get("/getcoursename", (req, res) => {
     pool.getConnection(function(err, connection) {
-        connection.query(`SELECT Name FROM Courses WHERE ID LIKE '${req.query.course}'`, (err, course) => {
+        connection.query(`SELECT Name FROM AllCourses WHERE ID LIKE '${req.query.course}'`, (err, course) => {
           if (err) throw err;
           connection.release();
           res.send(course)

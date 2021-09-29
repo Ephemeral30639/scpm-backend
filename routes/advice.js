@@ -26,7 +26,7 @@ router.get("/getalladvicecategory", (req, res) => {
 
 router.get("/getalladvice", (req, res) => {
     pool.getConnection(function(err, connection) {
-        connection.query(`SELECT Advices.category, Advices.courseID, Courses.Name, Advices.adviceText FROM Advices INNER JOIN Courses ON Courses.ID=Advices.courseID`, (err, data) => {
+        connection.query(`SELECT Advices.category, Advices.courseID, AllCourses.Name, Advices.adviceText FROM Advices INNER JOIN AllCourses ON AllCourses.ID=Advices.courseID`, (err, data) => {
           if (err) throw err;
           connection.release();
           res.send(data)
@@ -36,7 +36,7 @@ router.get("/getalladvice", (req, res) => {
 
 router.get("/getspecificadvice", (req, res) => {
   pool.getConnection(function(err, connection) {
-      connection.query(`SELECT Advices.category, Advices.courseID, Courses.Name, Advices.adviceText FROM Advices INNER JOIN Courses ON Courses.ID=Advices.courseID WHERE courseID like "${req.query.course}"`, (err, data) => {
+      connection.query(`SELECT Advices.category, Advices.courseID, AllCourses.Name, Advices.adviceText FROM Advices INNER JOIN AllCourses ON AllCourses.ID=Advices.courseID WHERE courseID like "${req.query.course}"`, (err, data) => {
         if (err) throw err;
         connection.release();
         res.send(data)
