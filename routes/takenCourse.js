@@ -25,7 +25,7 @@ const pool = mysql.createPool({
 //load all taken course
 router.get('/loadtakencourse', checkAuthenticated, (req, res) =>{
     pool.getConnection(function(err, connection) {
-      connection.query(`(SELECT Courses.ID, Courses.Name, Courses.Category, Courses.Credit, ${req.user.studentID}_Taken_Courses.remark FROM ${req.user.studentID}_Taken_Courses INNER JOIN Courses ON ${req.user.studentID}_Taken_Courses.Course_ID=Courses.ID)`, (err, takenCourses) => {
+      connection.query(`(SELECT ${req.user.studentID.substring(0,2)}Courses.ID, ${req.user.studentID.substring(0,2)}Courses.Name, ${req.user.studentID.substring(0,2)}Courses.Category, ${req.user.studentID.substring(0,2)}Courses.Credit, ${req.user.studentID}_Taken_Courses.remark FROM ${req.user.studentID}_Taken_Courses INNER JOIN ${req.user.studentID.substring(0,2)}Courses ON ${req.user.studentID}_Taken_Courses.Course_ID=${req.user.studentID.substring(0,2)}Courses.ID)`, (err, takenCourses) => {
         if (err) throw err;
         console.log('sending taken courses data');
         res.send(takenCourses) 
@@ -37,7 +37,7 @@ router.get('/loadtakencourse', checkAuthenticated, (req, res) =>{
 //load all non taken course
 router.get('/loadcourselist', checkAuthenticated, (req, res) =>{
   pool.getConnection(function(err, connection) {
-    connection.query(`SELECT Courses.ID, Courses.Name FROM Courses WHERE Courses.ID NOT IN (SELECT ${req.user.studentID}_Taken_Courses.Course_ID FROM ${req.user.studentID}_Taken_Courses)`, (err, Courses) => {
+    connection.query(`SELECT ${req.user.studentID.substring(0,2)}Courses.ID, ${req.user.studentID.substring(0,2)}Courses.Name FROM ${req.user.studentID.substring(0,2)}Courses WHERE ${req.user.studentID.substring(0,2)}Courses.ID NOT IN (SELECT ${req.user.studentID}_Taken_Courses.Course_ID FROM ${req.user.studentID}_Taken_Courses)`, (err, Courses) => {
       if (err) throw err;
       console.log("sending all non taken courses");
       res.send(Courses) 
