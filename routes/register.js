@@ -35,6 +35,7 @@ router.post('/',checkNotAuthenticated, async (req, res) => {
                         // If error (usually duplication error), send message to frontend to alert user.
                         console.log(err.sqlMessage)
                         res.send(err.sqlMessage)
+                        connection.release()
                         return
                     }
                     else {
@@ -48,6 +49,7 @@ router.post('/',checkNotAuthenticated, async (req, res) => {
                             if (err){
                                 console.log(err.sqlMessage)
                                 res.send(err.sqlMessage)
+                                connection.release()
                                 return
                             }
                             else {

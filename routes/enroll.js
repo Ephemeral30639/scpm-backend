@@ -14,10 +14,17 @@ const pool = mysql.createPool({
     database: "egcicourse"
 })
 
+const options = { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' }
+
 router.post("/enroll", checkAuthenticated, (req, res) => {
     pool.getConnection(function(err, connection) {
         connection.query(`SELECT * FROM ${req.query.trimester}_Enrollment where Student_ID like '${req.user.studentID}';`, (err, data) => {
-          if (err) throw err;
+          if (err){
+            console.log(err)
+            res.send('Error')
+            connection.release()
+            return
+          };
           connection.release();
 
           for (var i = 0; i < req.body.length; i++){
@@ -48,8 +55,16 @@ router.post("/unenroll", checkAuthenticated, (req, res) => {
 function deleteCourse(course, uuid,  studentID, trimester){
   pool.getConnection(function(err, connection) {
     connection.query(`DELETE FROM ${trimester}_Enrollment where Student_ID like '${studentID}' and Course_ID like '${course}' and uuid like '${uuid}'`, (err, data) => {
-      if (err) throw err;
+      if (err){
+        console.log(err)
+        res.send('Error')
+        connection.release()
+        return
+      };
       connection.release();
+      const time = new Date(Date.now())
+      const timestamp = `${time.toLocaleDateString('en-US', options).substring(5)} ${time.toLocaleTimeString('en-US', {hour12: false})}`
+      console.log(`${timestamp}: Successfully deleted ${course}`)
     })
   })
 }
@@ -57,8 +72,16 @@ function deleteCourse(course, uuid,  studentID, trimester){
 function pushCourse(course, uuid, studentID, trimester){
     pool.getConnection(function(err, connection) {
         connection.query(`insert into ${trimester}_Enrollment (Student_ID, Course_ID, uuid) values ('${studentID}','${course}', '${uuid}')`, (err, data) => {
-          if (err) throw err;
+          if (err){
+            console.log(err)
+            res.send('Error')
+            connection.release()
+            return
+          };
           connection.release();
+          const time = new Date(Date.now())
+          const timestamp = `${time.toLocaleDateString('en-US', options).substring(5)} ${time.toLocaleTimeString('en-US', {hour12: false})}`
+          console.log(`${timestamp}: Successfully Enrolled ${course}`)
         })
     })
 }

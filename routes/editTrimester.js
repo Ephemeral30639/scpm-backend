@@ -17,7 +17,12 @@ const pool = mysql.createPool({
 router.post("/addschedule", checkAuthenticated, (req, res) =>{
     pool.getConnection(function(err, connection) {
         connection.query(`insert into ${req.query.trimester} (ID, Date, Time) values ('${req.query.id}','${req.query.date}','${req.query.time}')`, (err, schedule) => {
-          if (err) throw err; 
+          if (err){
+            console.log(err)
+            res.send('Error')
+            connection.release()
+            return
+          }; 
           connection.release();
           res.send('Scheduled Added') 
         })
@@ -34,7 +39,12 @@ router.post("/deleteschedule", checkAuthenticated, (req, res) =>{
 function deleteSchedule(trimester, courseID){
     pool.getConnection(function(err, connection) {
       connection.query(`delete from ${trimester} where ID like '${courseID}'`, (err, data) => {
-        if (err) throw err;
+        if (err){
+          console.log(err)
+          res.send('Error')
+          connection.release()
+          return
+        };
         connection.release();
       })
     })

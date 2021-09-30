@@ -14,11 +14,21 @@ const pool = mysql.createPool({
     database: "egcicourse"
 })
 
+const options = { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' }
+
 router.get("/getallcourses", (req, res) => {
     pool.getConnection(function(err, connection) {
         connection.query(`SELECT DISTINCT ID FROM AllCourses`, (err, courses) => {
-          if (err) throw err;
+          if (err){
+              console.log(err)
+              res.send('Error')
+              connection.release()
+              return
+          };
           connection.release();
+          const time = new Date(Date.now())
+          const timestamp = `${time.toLocaleDateString('en-US', options).substring(5)} ${time.toLocaleTimeString('en-US', {hour12: false})}`
+          console.log(`${timestamp}: sending all courses ID`)
           res.send(courses)
         })
     })
@@ -27,8 +37,16 @@ router.get("/getallcourses", (req, res) => {
 router.get("/getcoursename", (req, res) => {
     pool.getConnection(function(err, connection) {
         connection.query(`SELECT Name FROM AllCourses WHERE ID LIKE '${req.query.course}'`, (err, course) => {
-          if (err) throw err;
+          if (err){
+              console.log(err)
+              res.send('Error')
+              connection.release()
+              return
+          };
           connection.release();
+          const time = new Date(Date.now())
+          const timestamp = `${time.toLocaleDateString('en-US', options).substring(5)} ${time.toLocaleTimeString('en-US', {hour12: false})}`
+          console.log(`${timestamp}: sending ${req.query.course}'s name`)
           res.send(course)
         })
     })
@@ -37,8 +55,16 @@ router.get("/getcoursename", (req, res) => {
 router.get("/getcoursecomments", (req, res) => {
     pool.getConnection(function(err, connection) {
         connection.query(`SELECT comment, timestamp, studentID FROM CourseComments WHERE courseID LIKE '${req.query.course}' ORDER BY timestamp`, (err, courseComments) => {
-          if (err) throw err;
+          if (err){
+              console.log(err)
+              res.send('Error')
+              connection.release()
+              return
+          };
           connection.release();
+          const time = new Date(Date.now())
+          const timestamp = `${time.toLocaleDateString('en-US', options).substring(5)} ${time.toLocaleTimeString('en-US', {hour12: false})}`
+          console.log(`${timestamp}: sending ${req.query.course}'s comments`)
           res.send(courseComments)
         })
     })
@@ -52,8 +78,16 @@ router.post("/inputcomment", (req, res) => {
     }
     pool.getConnection(function(err, connection) {
         connection.query(`insert into CourseComments (commentID, courseID, comment, timestamp, studentID) values ('${req.query.commentID}', '${req.query.courseID}', '${req.query.comment}', '${req.query.timestamp}', '${studentID}');`, (err, courseComments) => {
-          if (err) throw err;
+          if (err){
+              console.log(err)
+              res.send('Error')
+              connection.release()
+              return
+          };
           connection.release();
+          const time = new Date(Date.now())
+          const timestamp = `${time.toLocaleDateString('en-US', options).substring(5)} ${time.toLocaleTimeString('en-US', {hour12: false})}`
+          console.log(`${timestamp}: Successfully Commented`)
           res.send('Comment Successful')
         })
     })

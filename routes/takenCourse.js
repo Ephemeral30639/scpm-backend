@@ -22,12 +22,21 @@ const pool = mysql.createPool({
     database: "egcicourse"
 })
 
+const options = { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' }
+
 //load all taken course
 router.get('/loadtakencourse', checkAuthenticated, (req, res) =>{
     pool.getConnection(function(err, connection) {
       connection.query(`(SELECT ${req.user.studentID.substring(0,2)}Courses.ID, ${req.user.studentID.substring(0,2)}Courses.Name, ${req.user.studentID.substring(0,2)}Courses.Category, ${req.user.studentID.substring(0,2)}Courses.Credit, ${req.user.studentID}_Taken_Courses.remark FROM ${req.user.studentID}_Taken_Courses INNER JOIN ${req.user.studentID.substring(0,2)}Courses ON ${req.user.studentID}_Taken_Courses.Course_ID=${req.user.studentID.substring(0,2)}Courses.ID)`, (err, takenCourses) => {
-        if (err) throw err;
-        console.log('sending taken courses data');
+        if (err){
+          console.log(err)
+          res.send('Error')
+          connection.release()
+          return
+        };
+        const time = new Date(Date.now())
+        const timestamp = `${time.toLocaleDateString('en-US', options).substring(5)} ${time.toLocaleTimeString('en-US', {hour12: false})}`
+        console.log(`${timestamp}: sending all taken courses`)
         res.send(takenCourses) 
         connection.release(); 
       })
@@ -38,8 +47,15 @@ router.get('/loadtakencourse', checkAuthenticated, (req, res) =>{
 router.get('/loadcourselist', checkAuthenticated, (req, res) =>{
   pool.getConnection(function(err, connection) {
     connection.query(`SELECT ${req.user.studentID.substring(0,2)}Courses.ID, ${req.user.studentID.substring(0,2)}Courses.Name FROM ${req.user.studentID.substring(0,2)}Courses WHERE ${req.user.studentID.substring(0,2)}Courses.ID NOT IN (SELECT ${req.user.studentID}_Taken_Courses.Course_ID FROM ${req.user.studentID}_Taken_Courses)`, (err, Courses) => {
-      if (err) throw err;
-      console.log("sending all non taken courses");
+      if (err){
+        console.log(err)
+        res.send('Error')
+        connection.release()
+        return
+      };
+      const time = new Date(Date.now())
+      const timestamp = `${time.toLocaleDateString('en-US', options).substring(5)} ${time.toLocaleTimeString('en-US', {hour12: false})}`
+      console.log(`${timestamp}: sending all non taken courses`)
       res.send(Courses) 
       connection.release(); 
     })
