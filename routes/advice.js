@@ -93,7 +93,7 @@ router.post("/createadvice", (req, res) => {
       connection.query(`INSERT INTO Advices (category, courseID, adviceText) VALUES ("${req.query.category}","${req.query.courseID}","${req.query.adviceText}")`, (err, data) => {
         if (err){
           console.log(err)
-          res.send('Error')
+          res.send(err.code)
           connection.release()
           return
         };
