@@ -14,14 +14,6 @@ const pool = mysql.createPool({
     database: "egcicourse"
 })
 
-//Allow Access-Control-Allow-Origin
-//ref: https://stackoverflow.com/questions/18642828/origin-origin-is-not-allowed-by-access-control-allow-origin
-router.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
-
 const options = { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' }
 
 router.get("/getalladvicecategory", (req, res) => {
