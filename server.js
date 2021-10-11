@@ -46,13 +46,12 @@ app.use(flash())
 //     }
 // }))
 app.use(cookieSession({
-    secret: 'secret',
+    secret: "secret",
     resave: false,
     saveUninitialized: false,
     cookie: {
-        maxAge: 60 * 60 * 1000,
-        sameSite: process.env.NODE_ENV === "production" ? 'none' : 'lax',
-        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? 'none' : 'lax', // must be 'none' to enable cross-site delivery
+        secure: process.env.NODE_ENV === "production", // must be true if sameSite='none'
     }
 }))
 app.use(passport.initialize())
