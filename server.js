@@ -35,16 +35,10 @@ app.use(express.json());
 app.set('view-engine', 'pug')
 app.use(express.urlencoded({extended: false}))
 app.use(flash())
-// app.use(session({
-//     secret: "secret",
-//     resave: false,
-//     saveUninitialized: false
-// }))
-app.use(cookieSession({
-    secret: 'secret',
-    cookie: {
-        maxAge: 60 * 60 * 1000
-    }
+app.use(session({
+    secret: "secret",
+    resave: false,
+    saveUninitialized: false
 }))
 app.use(passport.initialize())
 app.use(passport.session())
@@ -53,7 +47,7 @@ app.use(methodOverride('_method'))
 // I am not sure why, but there will be CORS error if this "use" is deleted.
 app.use(
     cors({
-         origin: "http://scpm2021.herokuapp.com", // allow to server to accept request from different origin
+         origin: "http://localhost:5000", // allow to server to accept request from different origin
          methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
          credentials: true, // allow session cookie from browser to pass through
    })
