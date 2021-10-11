@@ -5,6 +5,7 @@
 
 // Requires
 const express = require('express')
+const cookieSession = require('cookie-session')
 const app = express()
 const passport = require('passport')
 const flash = require('express-flash')
@@ -34,10 +35,16 @@ app.use(express.json());
 app.set('view-engine', 'pug')
 app.use(express.urlencoded({extended: false}))
 app.use(flash())
-app.use(session({
-    secret: "secret",
-    resave: false,
-    saveUninitialized: false
+// app.use(session({
+//     secret: "secret",
+//     resave: false,
+//     saveUninitialized: false
+// }))
+app.use(cookieSession({
+    secret: 'secret',
+    cookie: {
+        maxAge: 60 * 60 * 1000
+    }
 }))
 app.use(passport.initialize())
 app.use(passport.session())
