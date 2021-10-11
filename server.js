@@ -44,7 +44,9 @@ app.use(flash())
 app.use(cookieSession({
     secret: 'secret',
     cookie: {
-        maxAge: 60 * 60 * 1000
+        maxAge: 60 * 60 * 1000,
+        sameSite: process.env.NODE_ENV === "production" ? 'none' : 'lax',
+        secure: process.env.NODE_ENV === "production",
     }
 }))
 app.use(passport.initialize())
