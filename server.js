@@ -36,19 +36,23 @@ app.use(express.json());
 app.set('view-engine', 'pug')
 app.use(express.urlencoded({extended: false}))
 app.use(flash())
-// app.use(session({
-//     secret: "secret",
-//     resave: false,
-//     saveUninitialized: false
-// }))
-app.use(cookieSession({
-    secret: 'secret',
+app.use(session({
+    secret: "secret",
+    resave: false,
+    saveUninitialized: false,
     cookie: {
-        maxAge: 60 * 60 * 1000,
-        sameSite: process.env.NODE_ENV === "production" ? 'none' : 'lax',
-        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? 'none' : 'lax', // must be 'none' to enable cross-site delivery
+        secure: process.env.NODE_ENV === "production", // must be true if sameSite='none'
     }
 }))
+// app.use(cookieSession({
+//     secret: 'secret',
+//     cookie: {
+//         maxAge: 60 * 60 * 1000,
+//         sameSite: process.env.NODE_ENV === "production" ? 'none' : 'lax',
+//         secure: process.env.NODE_ENV === "production",
+//     }
+// }))
 app.use(passport.initialize())
 app.use(passport.session())
 app.use(methodOverride('_method'))
