@@ -31,6 +31,7 @@ const Comments = require('./routes/comments')
 const GPCC = require('./routes/gpcc')
 
 //App Uses
+app.set("trust proxy", 1)
 app.use(express.json());
 app.set('view-engine', 'pug')
 app.use(express.urlencoded({extended: false}))
