@@ -35,10 +35,14 @@ app.use(express.json());
 app.set('view-engine', 'pug')
 app.use(express.urlencoded({extended: false}))
 app.use(flash())
-app.use(session({
+// app.use(session({
+//     secret: "secret",
+//     resave: false,
+//     saveUninitialized: false
+// }))
+app.use(cookieSession({
     secret: "secret",
-    resave: false,
-    saveUninitialized: false
+    cookie: { maxAge: 60 * 60 * 1000 }
 }))
 app.use(passport.initialize())
 app.use(passport.session())
