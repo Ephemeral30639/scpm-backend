@@ -44,7 +44,7 @@ router.post('/',checkNotAuthenticated, async (req, res) => {
                         res.send('Registration Successful')
 
                         // Create a "Taken Courses" Table for the new user. If no error until here, should not have anymore error.
-                        connection.query(`CREATE TABLE ${req.body.StudentID}_Taken_Courses (Student_ID int NOT NULL, Course_ID varchar(7) NOT NULL, remark varchar(255)), PRIMARY KEY (Course_ID))`, (err, tableData) => {
+                        connection.query(`CREATE TABLE ${req.body.StudentID}_Taken_Courses (Student_ID int NOT NULL, Course_ID varchar(7) NOT NULL, remark varchar(255), PRIMARY KEY (Course_ID))`, (err, tableData) => {
                             connection.release();
                             if (err){
                                 console.log(err.sqlMessage)
